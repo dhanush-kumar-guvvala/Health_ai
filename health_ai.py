@@ -4,8 +4,9 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
+import ploty pt
+import pt.express as px
+import pt.graph_objects as go
 from datetime import datetime, timedelta
 import json
 import os
