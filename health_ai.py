@@ -4,7 +4,7 @@ dependencies
 streamlit
 sqlite3
 pandas
-plotly
+plotly==5.22.0
 datetime
 json
 os
