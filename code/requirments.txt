@@ -9,3 +9,4 @@ langchain-ibm
 ibm-watson-machine-learning
 concurrent-log-handler
 numpy
+python-dotenv
