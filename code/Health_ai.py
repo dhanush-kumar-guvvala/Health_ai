@@ -2,26 +2,28 @@
 # Run with: streamlit run health_ai.py
 
 import streamlit as st
+from dotenv import load_dotenv
+import os
 import sqlite3
-import altair as alt
-import numpy as np 
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import json
 import os
 from typing import Dict, List, Any
 import random
-import langchain
 from langchain.prompts import PromptTemplate
 from langchain_ibm import WatsonxLLM
 import hashlib
 import concurrent.futures
 
-# Configuration
-WATSONX_URL = "https://us-south.ml.cloud.ibm.com"
-WATSONX_APIKEY = "v2pjUHPAm5HfLBGpVN5T1-DHjM3tbAVIzyQmEUhMS_0v"
-WATSONX_PROJECT_ID = "443a8ed4-48fd-4630-ab81-e5a5480dd375"
-WATSONX_MODEL_ID = "ibm/granite-3-2-8b-instruct"
+load_dotenv()
+
+WATSONX_URL = os.getenv("WATSONX_URL")
+WATSONX_APIKEY = os.getenv("WATSONX_APIKEY")
+WATSONX_PROJECT_ID = os.getenv("WATSONX_PROJECT_ID")
+WATSONX_MODEL_ID = os.getenv("WATSONX_MODEL_ID")
 
 # CSS Styling
 def load_css():
@@ -1047,31 +1049,36 @@ def show_health_analytics():
     # Blood Pressure Chart
     bp_data = metrics_df[metrics_df['metric_type'].isin(['blood_pressure_systolic', 'blood_pressure_diastolic'])]
     if not bp_data.empty:
-        bp_chart = alt.Chart(bp_data).mark_line(point=True).encode(
-            x=alt.X('recorded_date:T', title='Date'),
-            y=alt.Y('value:Q', title='mmHg'),
-            color=alt.Color('metric_type:N', title='Metric'),
-            tooltip=['recorded_date', 'metric_type', 'value']
-        ).properties(
+        fig_bp = px.line(
+            bp_data, 
+            x='recorded_date', 
+            y='value', 
+            color='metric_type',
             title='Blood Pressure Trends',
-            width=600,
-            height=300
+            labels={'value': 'mmHg', 'recorded_date': 'Date'}
         )
-        st.altair_chart(bp_chart, use_container_width=True)
+        fig_bp.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+        )
+        st.plotly_chart(fig_bp, use_container_width=True)
     
     # Heart Rate Chart
     hr_data = metrics_df[metrics_df['metric_type'] == 'heart_rate']
     if not hr_data.empty:
-        hr_chart = alt.Chart(hr_data).mark_line(point=True, color='red').encode(
-            x=alt.X('recorded_date:T', title='Date'),
-            y=alt.Y('value:Q', title='BPM'),
-            tooltip=['recorded_date', 'value']
-        ).properties(
+        fig_hr = px.line(
+            hr_data,
+            x='recorded_date',
+            y='value',
             title='Heart Rate Trends',
-            width=600,
-            height=300
+            labels={'value': 'BPM', 'recorded_date': 'Date'}
         )
-        st.altair_chart(hr_chart, use_container_width=True)
+        fig_hr.update_traces(line_color='red')
+        fig_hr.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+        )
+        st.plotly_chart(fig_hr, use_container_width=True)
     
     # Weight and Blood Sugar Charts
     col1, col2 = st.columns(2)
@@ -1079,30 +1086,36 @@ def show_health_analytics():
     with col1:
         weight_data = metrics_df[metrics_df['metric_type'] == 'weight']
         if not weight_data.empty:
-            weight_chart = alt.Chart(weight_data).mark_line(point=True, color='green').encode(
-                x=alt.X('recorded_date:T', title='Date'),
-                y=alt.Y('value:Q', title='kg'),
-                tooltip=['recorded_date', 'value']
-            ).properties(
+            fig_weight = px.line(
+                weight_data,
+                x='recorded_date',
+                y='value',
                 title='Weight Trends',
-                width=300,
-                height=250
+                labels={'value': 'kg', 'recorded_date': 'Date'}
             )
-            st.altair_chart(weight_chart, use_container_width=True)
+            fig_weight.update_traces(line_color='green')
+            fig_weight.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+            )
+            st.plotly_chart(fig_weight, use_container_width=True)
     
     with col2:
         bs_data = metrics_df[metrics_df['metric_type'] == 'blood_sugar']
         if not bs_data.empty:
-            bs_chart = alt.Chart(bs_data).mark_line(point=True, color='orange').encode(
-                x=alt.X('recorded_date:T', title='Date'),
-                y=alt.Y('value:Q', title='mg/dL'),
-                tooltip=['recorded_date', 'value']
-            ).properties(
+            fig_bs = px.line(
+                bs_data,
+                x='recorded_date',
+                y='value',
                 title='Blood Sugar Trends',
-                width=300,
-                height=250
+                labels={'value': 'mg/dL', 'recorded_date': 'Date'}
             )
-            st.altair_chart(bs_chart, use_container_width=True)
+            fig_bs.update_traces(line_color='orange')
+            fig_bs.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+            )
+            st.plotly_chart(fig_bs, use_container_width=True)
     
     # Health Insights with AI
     st.subheader("AI Health Insights")
@@ -1500,4 +1513,4 @@ def show_admin_patient_chat():
 # Run the application
 if __name__ == "__main__":
     main()
-    show_footer
+    show_footer()
