@@ -4,7 +4,7 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
-import ploty as pt
+import plotly as pt
 import pt.express as px
 import pt.graph_objects as go
 from datetime import datetime, timedelta
