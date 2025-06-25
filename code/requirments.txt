@@ -1,0 +1,11 @@
+streamlit
+pandas
+plotly
+PyPDF2
+pytesseract
+Pillow
+langchain
+langchain-ibm
+ibm-watson-machine-learning
+concurrent-log-handler
+numpy
