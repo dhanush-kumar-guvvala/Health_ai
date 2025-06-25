@@ -1,4 +1,19 @@
 # Health AI - Complete Streamlit Application
+"""
+dependencies
+streamlit
+sqlite3
+pandas
+plotly
+datetime
+json
+os
+typing
+random
+langchain
+hashlib
+concurrent.features
+"""
 # Run with: streamlit run health_ai.py
 
 import streamlit as st
