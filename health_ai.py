@@ -11,6 +11,7 @@ import json
 import os
 from typing import Dict, List, Any
 import random
+import langchain
 from langchain.prompts import PromptTemplate
 from langchain_ibm import WatsonxLLM
 import hashlib
